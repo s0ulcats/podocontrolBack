@@ -11,9 +11,17 @@ const UserSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        status: {
+            type: String,
+            required: true,
+        },
         posts: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Post',
+        }],
+        dialogs: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Dialog',
         }]
     },
     { timestamps: true },

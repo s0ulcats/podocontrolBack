@@ -6,7 +6,8 @@ import authRoute from './routes/auth.js';
 import postRoute from './routes/posts.js';
 import commentRoute from './routes/comment.js';
 import dialogRoute from './routes/dialog.js';
-import usersRoute from './routes/users.js'; // Импортируем маршруты пользователей
+import messageRoute from './routes/message.js';
+import usersRoute from './routes/users.js';
 import fileUpload from 'express-fileupload';
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use('/api/auth', authRoute);
 app.use('/api/posts', postRoute);
 app.use('/api/comments', commentRoute);
 app.use('/api/dialogs', dialogRoute);
+app.use('/api/messages', messageRoute);
 app.use('/api/users', usersRoute); // Убедитесь, что этот маршрут подключен
 
 // Проверка подключения к базе данных
@@ -42,6 +44,7 @@ async function start() {
         });
     } catch (error) {
         console.log('DB connection error:', error);
+        process.exit(1); // Прерываем запуск приложения при ошибке подключения
     }
 }
 

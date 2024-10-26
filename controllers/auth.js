@@ -4,43 +4,46 @@ import jwt from 'jsonwebtoken'
 
 export const register = async (req, res) => {
     try {
-        const { username, password } = req.body
+        const { username, password } = req.body;
 
-        const isUsed = await User.findOne({ username })
+        const isUsed = await User.findOne({ username });
 
         if (isUsed) {
-            return res.status(402).send({ message: 'This username is busy' }) // Добавлен return
+            return res.status(402).send({ message: 'This username is busy' });
         }
 
-        const salt = bcrypt.genSaltSync(10)
-        const hash = bcrypt.hashSync(password, salt)
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(password, salt);
 
+        // Установите статус пользователя
         const newUser = new User({
             username,
             password: hash,
-        })
+            status: 'active', // Устанавливаем статус
+        });
 
         const token = jwt.sign(
             {
-                id: newUser._id
+                id: newUser._id,
             },
             process.env.JWT_SECRET,
             { expiresIn: '30d' }
-        )
+        );
 
-        await newUser.save()
+        await newUser.save();
 
         return res.send({
             newUser,
             token,
-            message: "Register is successfuly" // Добавлен return
-        })
+            message: "Register is successfuly",
+        });
 
     } catch (error) {
-        res.status(500).send({ message: "Err with create user" }) // Лучше использовать res.status(500)
+        res.status(500).send({ message: "Err with create user" });
         console.log(error);
     }
-}
+};
+
 
 export const login = async (req, res) => {
     try {

@@ -1,26 +1,30 @@
-import Comment from '../models/Comment.js'
-import Post from '../models/Post.js'
+import Comment from '../models/Comment.js';
+import Post from '../models/Post.js';
 
 export const createComment = async (req, res) => {
     try {
-        const { postId, comment } = req.body
-        if (!comment) 
-            return res.send({message: 'Comment`s can`t be empty'})
+        const { postId, comment } = req.body;
+        const userId = req.userId; // Получаем ID пользователя
 
-        const newComment = new Comment({ comment });
-        await newComment.save()
-        
+        if (!comment) {
+            return res.status(400).send({ message: 'Comment cannot be empty' });
+        }
+
+        const newComment = new Comment({ comment, author: userId, postId }); // Создаем комментарий с привязкой к посту и автору
+        await newComment.save();
+
         try {
             await Post.findByIdAndUpdate(postId, {
-                $push: {comments: newComment._id },
-            })
+                $push: { comments: newComment._id }, // Обновляем пост, добавляя ID комментария
+            });
         } catch (error) {
-            console.log(error);
-            
+            console.log('Error updating post with new comment:', error);
+            return res.status(500).send({ message: 'Failed to update post with comment' });
         }
-        return res.send(newComment)
+
+        return res.status(201).send(newComment); // Отправляем созданный комментарий
     } catch (error) {
-        return res.send({message: 'Error with Something'})
-        
+        console.log('Error creating comment:', error);
+        return res.status(500).send({ message: 'Something went wrong while creating comment' });
     }
-}
+};

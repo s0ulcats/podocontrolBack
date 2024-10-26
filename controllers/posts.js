@@ -129,14 +129,18 @@ export const updatePost = async ( req, res) => {
 
 export const getPostComments = async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id).populate('comments'); // Используйте populate для автоматического получения комментариев
+        const post = await Post.findById(req.params.id).populate({
+            path: 'comments',
+            populate: { path: 'author', select: 'username' } // Подгружаем автора комментария
+        });
+
         if (!post) {
             return res.status(404).send({ message: 'Post not found' });
         }
 
-        const comments = await Comment.find({ _id: { $in: post.comments } }); // Это для получения всех комментариев
-        return res.send(comments);
+        res.status(200).send(post.comments); // Отправляем комментарии
     } catch (error) {
-        return res.send({ message: 'Something went wrong' });
+        console.log('Error fetching post comments:', error);
+        return res.status(500).send({ message: 'Failed to fetch comments' });
     }
-}
+};
