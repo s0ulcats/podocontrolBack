@@ -1,6 +1,6 @@
-import User from '../models/User.js'
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 export const register = async (req, res) => {
     try {
@@ -15,11 +15,10 @@ export const register = async (req, res) => {
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(password, salt);
 
-        // Установите статус пользователя
         const newUser = new User({
             username,
             password: hash,
-            status: 'active', // Устанавливаем статус
+            status: 'active',
         });
 
         const token = jwt.sign(
@@ -47,17 +46,17 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-        const { username, password } = req.body
-        const user = await User.findOne({ username })
+        const { username, password } = req.body;
+        const user = await User.findOne({ username });
 
         if (!user) {
-            return res.send({ message: "User doesn't exist" }) // Добавлен return
+            return res.send({ message: "User doesn't exist" });
         }
 
-        const isPasswordCorrect = await bcrypt.compare(password, user.password)
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
         if (!isPasswordCorrect) {
-            return res.send({ message: 'Incorrect password' }) // Добавлен return
+            return res.send({ message: 'Incorrect password' });
         }
 
         const token = jwt.sign(
@@ -66,25 +65,25 @@ export const login = async (req, res) => {
             },
             process.env.JWT_SECRET,
             { expiresIn: '30d' }
-        )
+        );
 
         return res.send({
             token,
             user,
-            message: "You enter to the system" // Добавлен return
-        })
+            message: "You enter to the system"
+        });
     } catch (error) {
-        res.status(500).send({ message: "Err with authorization" }) // Лучше использовать res.status(500)
+        res.status(500).send({ message: "Err with authorization" });
         console.log(error);
     }
 }
 
 export const getMe = async (req, res) => {
     try {
-        const user = await User.findById(req.userId)
+        const user = await User.findById(req.userId);
 
         if (!user) {
-            return res.send({ message: "User doesn't exist" }) // Исправлено: сообщение исправлено и добавлен return
+            return res.send({ message: "User doesn't exist" });
         }
 
         const token = jwt.sign(
@@ -93,14 +92,14 @@ export const getMe = async (req, res) => {
             },
             process.env.JWT_SECRET,
             { expiresIn: '30d' }
-        )
+        );
 
         return res.send({
             user,
             token
-        })
+        });
     } catch (error) {
         console.log(error);
-        return res.status(500).send({message: "Not access"}) // Использован res.status(500)
+        return res.status(500).send({message: "Not access"});
     }
 }

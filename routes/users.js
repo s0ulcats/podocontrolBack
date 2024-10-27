@@ -3,9 +3,9 @@ import { getAllUsers, getUserById, getUserPosts, updateUsersStatus } from '../co
 
 const router = new Router();
 
-router.get('/', getAllUsers); // Роут для получения всех пользователей
-router.get('/:id', getUserById); // Роут для получения пользователя по ID
-router.get('/:id/posts', getUserPosts); // Роут для получения постов конкретного пользователя
-router.put('/:id', updateUsersStatus); // Новый роут для обновления статуса пользователя
+router.get('/', getAllUsers);
+router.get('/:id', getUserById);
+router.get('/:id/posts', getUserPosts);
+router.put('/:id', updateUsersStatus);
 
 export default router;

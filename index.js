@@ -21,17 +21,15 @@ const DB_NAME = process.env.DB_NAME;
 app.use(cors());
 app.use(express.json());
 app.use(fileUpload());
-app.use(express.static('uploads')); // Папка для статики
+app.use(express.static('uploads'));
 
-// Подключение маршрутов
 app.use('/api/auth', authRoute);
 app.use('/api/posts', postRoute);
 app.use('/api/comments', commentRoute);
 app.use('/api/dialogs', dialogRoute);
 app.use('/api/messages', messageRoute);
-app.use('/api/users', usersRoute); // Убедитесь, что этот маршрут подключен
+app.use('/api/users', usersRoute);
 
-// Проверка подключения к базе данных
 async function start() {
     try {
         await mongoose.connect(
@@ -44,7 +42,7 @@ async function start() {
         });
     } catch (error) {
         console.log('DB connection error:', error);
-        process.exit(1); // Прерываем запуск приложения при ошибке подключения
+        process.exit(1);
     }
 }
 

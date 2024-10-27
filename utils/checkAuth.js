@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 
 export const checkAuth = (req, res, next) => {
-    // Извлекаем токен и логируем его
     const token = (req.headers.authorization || '').replace(/Bearer\s?/, '');
     console.log('Received token:', token);
 
@@ -9,15 +8,15 @@ export const checkAuth = (req, res, next) => {
         try {
             // Проверка токена
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.userId = decoded.id; // Устанавливаем userId из токена
-            console.log('Decoded user ID:', req.userId); // Логируем userId
-            next(); // Продолжаем выполнение запроса
+            req.userId = decoded.id;
+            console.log('Decoded user ID:', req.userId);
+            next();
         } catch (error) {
-            console.error('Token verification error:', error); // Логируем ошибку
+            console.error('Token verification error:', error);
             return res.status(403).send({ message: 'No access' });
         }
     } else {
-        console.warn('No token provided'); // Логируем отсутствие токена
+        console.warn('No token provided');
         return res.status(403).send({ message: 'No access' });
     }
 };

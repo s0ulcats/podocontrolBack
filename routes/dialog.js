@@ -4,13 +4,10 @@ import { createDialog, getAll, getDialogMessages, getDialogByUserId } from '../c
 
 const router = new Router();
 
-// Создание нового диалога
 router.post('/', checkAuth, createDialog);
 
-// Получение всех диалогов
 router.get('/', getAll);
 
-// Получение сообщений диалога по ID
 router.get('/messages/:id', async (req, res) => {
     try {
         const messages = await getDialogMessages(req.params.id);
@@ -23,7 +20,6 @@ router.get('/messages/:id', async (req, res) => {
     }
 });
 
-// Получение диалога по userId
 router.get('/user/:userId', checkAuth, getDialogByUserId);
 
 export default router;
