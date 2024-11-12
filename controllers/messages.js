@@ -11,7 +11,7 @@ export const createMessage = async (req, res) => {
 
         const userId = req.userId;
 
-        const newMessage = new Message({ message, author: userId, dialogId });
+        const newMessage = new Message({ message, phone, author: userId, dialogId });
         await newMessage.save();
 
         return res.status(201).send(newMessage);

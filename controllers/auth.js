@@ -4,9 +4,9 @@ import jwt from 'jsonwebtoken';
 
 export const register = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, phone, password } = req.body;
 
-        const isUsed = await User.findOne({ username });
+        const isUsed = await User.findOne({ phone });
 
         if (isUsed) {
             return res.status(402).send({ message: 'This username is busy' });
@@ -16,9 +16,9 @@ export const register = async (req, res) => {
         const hash = bcrypt.hashSync(password, salt);
 
         const newUser = new User({
+            phone,
             username,
             password: hash,
-            status: 'active',
         });
 
         const token = jwt.sign(
@@ -46,8 +46,8 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        const { username, phone, password } = req.body;
+        const user = await User.findOne({ phone });
 
         if (!user) {
             return res.send({ message: "User doesn't exist" });

@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import authRoute from './routes/auth.js';
 import postRoute from './routes/posts.js';
-import commentRoute from './routes/comment.js';
 import dialogRoute from './routes/dialog.js';
 import messageRoute from './routes/message.js';
 import usersRoute from './routes/users.js';
@@ -25,7 +24,6 @@ app.use(express.static('uploads'));
 
 app.use('/api/auth', authRoute);
 app.use('/api/posts', postRoute);
-app.use('/api/comments', commentRoute);
 app.use('/api/dialogs', dialogRoute);
 app.use('/api/messages', messageRoute);
 app.use('/api/users', usersRoute);

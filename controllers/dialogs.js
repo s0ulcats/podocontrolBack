@@ -12,6 +12,7 @@ export const createDialog = async (req, res) => {
         }
 
         const newDialog = new Dialog({
+            phone: user.phone,
             username: user.username,
             author: req.userId,
         });

@@ -5,10 +5,8 @@ export const checkAuth = (req, res, next) => {
 
     if (token) {
         try {
-            // Проверка токена
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             req.userId = decoded.id;
-            console.log('Decoded user ID:', req.userId);
             next();
         } catch (error) {
             console.error('Token verification error:', error);

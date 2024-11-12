@@ -27,31 +27,18 @@ export const getUserById = async (req, res) => {
     }
 };
 
-export const getUserPosts = async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const posts = await Post.find({ author: userId });
-        if (!posts.length) {
-            return res.status(404).json({ message: 'No posts found' });
-        }
-        res.json(posts);
-    } catch (error) {
-        console.error('Error fetching user posts:', error);
-        res.status(500).json({ message: 'Something is wrong' });
-    }
-};
-
-export const updateUsersStatus = async (req, res) => {
+export const updateAccountData = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.status = req.body.status || 'Статус';
+        user.username = req.body.username || 'undf';
+        user.phone = req.body.phone || 'undf';
         await user.save();
         
-        res.json(user);
+        res.json(user); // Возвращаем обновленный объект пользователя
     } catch (error) {
         res.status(500).json({ message: 'Something went wrong' });
     }

@@ -14,7 +14,8 @@ export const createPost = async (req, res) => {
             req.files.image.mv(path.join(__dirname, '..', 'uploads', fileName));
 
             const newPostWithImage = new Post({
-                username: user.username,
+                phone: user.phone,
+                user: user.username,
                 title,
                 text,
                 imgUrl: fileName,
@@ -29,7 +30,8 @@ export const createPost = async (req, res) => {
         }
 
         const newPostWithoutImage = new Post({
-            username: user.username,
+            phone: user.phone,
+            user: user.username,
             title,
             text,
             imgUrl: '',
@@ -49,12 +51,11 @@ export const createPost = async (req, res) => {
 export const getAll = async (req, res) => {
     try {
         const posts = await Post.find().sort('-createdAt');
-        const popularPosts = await Post.find().limit(5).sort('-veiws');
         if (!posts) {
             return res.send({ message: 'Posts not exist' });
         }
 
-        res.send({ posts, popularPosts });
+        res.send({ posts });
     } catch (error) {
         res.send({ message: 'Somethimg is wrong' });
     }
@@ -66,20 +67,6 @@ export const getById = async (req, res) => {
             $inc: { views: 1 },
         });
         res.send(post);
-    } catch (error) {
-        res.send({ message: 'Somethimg is wrong' });
-    }
-};
-
-export const getMyPosts = async (req, res) => {
-    try {
-        const user = await User.findById(req.userId);
-        const list = await Promise.all(
-            user.posts.map(post => {
-                return Post.findById(post._id);
-            })
-        );
-        res.send(list);
     } catch (error) {
         res.send({ message: 'Somethimg is wrong' });
     }
@@ -119,23 +106,5 @@ export const updatePost = async (req, res) => {
         res.send(post);
     } catch (error) {
         res.send({ message: 'Somethimg is wrong' });
-    }
-};
-
-export const getPostComments = async (req, res) => {
-    try {
-        const post = await Post.findById(req.params.id).populate({
-            path: 'comments',
-            populate: { path: 'author', select: 'username' }
-        });
-
-        if (!post) {
-            return res.status(404).send({ message: 'Post not found' });
-        }
-
-        res.status(200).send(post.comments);
-    } catch (error) {
-        console.log('Error fetching post comments:', error);
-        return res.status(500).send({ message: 'Failed to fetch comments' });
     }
 };
