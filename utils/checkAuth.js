@@ -6,7 +6,7 @@ export const checkAuth = (req, res, next) => {
     if (token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.userId = decoded.id;
+            req.userId = decoded.id;  // Убедитесь, что id из токена соответствует userId
             next();
         } catch (error) {
             console.error('Token verification error:', error);
