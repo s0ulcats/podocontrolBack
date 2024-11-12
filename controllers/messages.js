@@ -1,5 +1,5 @@
 import Message from '../models/Message.js';
-
+import User from '../models/User.js'
 export const createMessage = async (req, res) => {
     try {
         const { message, dialogId } = req.body;
@@ -11,6 +11,16 @@ export const createMessage = async (req, res) => {
 
         const userId = req.userId;
 
+        // Получаем информацию о пользователе по userId
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        // Теперь у нас есть номер телефона пользователя
+        const phone = user.phone;
+
+        // Создаем новое сообщение
         const newMessage = new Message({ message, phone, author: userId, dialogId });
         await newMessage.save();
 
