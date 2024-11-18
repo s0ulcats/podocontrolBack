@@ -1,30 +1,41 @@
 import Message from '../models/Message.js';
 import User from '../models/User.js'
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
 export const createMessage = async (req, res) => {
     try {
         const { message, dialogId } = req.body;
-
-        if (!dialogId || !message) {
-            console.error('dialogId or message is missing');
-            return res.status(400).send({ message: 'dialogId and message are required' });
-        }
-
         const userId = req.userId;
-
-        // Получаем информацию о пользователе по userId
         const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).send({ message: 'User not found' });
+        if (req.files) {
+            let fileName = Date.now().toString() + req.files.image.name;
+            const __dirname = dirname(fileURLToPath(import.meta.url));
+            req.files.image.mv(path.join(__dirname, '..', 'uploads', fileName));
+
+            const newMessageWithImg = new Message({
+                message,
+                phone: user.phone,
+                author: userId,
+                imgUrl: fileName,
+                dialogId,
+            });
+
+            await newMessageWithImg.save();
+            return res.send(newMessageWithImg);
         }
 
-        // Теперь у нас есть номер телефона пользователя
-        const phone = user.phone;
+        const newMessageWithoutImg = new Message({
+            message,
+            phone: user.phone,
+            author: userId,
+            imgUrl: '',
+            dialogId,
+        });
 
-        // Создаем новое сообщение
-        const newMessage = new Message({ message, phone, author: userId, dialogId });
-        await newMessage.save();
+        await newMessageWithoutImg.save();
+        return res.send(newMessageWithoutImg);
 
-        return res.status(201).send(newMessage);
     } catch (error) {
         console.error('Error creating message:', error);
         return res.status(500).send({ message: 'Something went wrong while creating message' });

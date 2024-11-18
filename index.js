@@ -8,6 +8,7 @@ import dialogRoute from './routes/dialog.js';
 import messageRoute from './routes/message.js';
 import usersRoute from './routes/users.js';
 import fileUpload from 'express-fileupload';
+import recordingRoute from './routes/recordings.js';
 
 dotenv.config();
 const app = express();
@@ -27,6 +28,7 @@ app.use('/api/posts', postRoute);
 app.use('/api/dialogs', dialogRoute);
 app.use('/api/messages', messageRoute);
 app.use('/api/users', usersRoute);
+app.use('/api/recordings', recordingRoute);
 
 async function start() {
     try {
