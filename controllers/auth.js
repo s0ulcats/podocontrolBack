@@ -9,7 +9,7 @@ export const register = async (req, res) => {
         const isUsed = await User.findOne({ phone });
 
         if (isUsed) {
-            return res.status(402).send({ message: 'This username is busy' });
+            return res.status(402).send({ message: 'This phone number is already in use' });
         }
 
         const salt = bcrypt.genSaltSync(10);
@@ -22,9 +22,7 @@ export const register = async (req, res) => {
         });
 
         const token = jwt.sign(
-            {
-                id: newUser._id,
-            },
+            { id: newUser._id },
             process.env.JWT_SECRET,
             { expiresIn: '30d' }
         );
@@ -34,15 +32,14 @@ export const register = async (req, res) => {
         return res.send({
             newUser,
             token,
-            message: "Register is successfuly",
+            message: "Registration successful",
         });
 
     } catch (error) {
-        res.status(500).send({ message: "Err with create user" });
         console.log(error);
+        return res.status(500).send({ message: "Error while creating user" });
     }
 };
-
 
 export const login = async (req, res) => {
     try {
@@ -50,19 +47,17 @@ export const login = async (req, res) => {
         const user = await User.findOne({ phone });
 
         if (!user) {
-            return res.send({ message: "User doesn't exist" });
+            return res.status(404).send({ message: "User doesn't exist" });
         }
 
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
         if (!isPasswordCorrect) {
-            return res.send({ message: 'Incorrect password' });
+            return res.status(401).send({ message: 'Incorrect password' });
         }
 
         const token = jwt.sign(
-            {
-                id: user._id
-            },
+            { id: user._id },
             process.env.JWT_SECRET,
             { expiresIn: '30d' }
         );
@@ -70,13 +65,13 @@ export const login = async (req, res) => {
         return res.send({
             token,
             user,
-            message: "You enter to the system"
+            message: "Login successful",
         });
     } catch (error) {
-        res.status(500).send({ message: "Err with authorization" });
         console.log(error);
+        return res.status(500).send({ message: "Error with authentication" });
     }
-}
+};
 
 export const getMe = async (req, res) => {
     try {

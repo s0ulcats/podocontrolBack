@@ -1,5 +1,5 @@
 import Message from '../models/Message.js';
-import User from '../models/User.js'
+import User from '../models/User.js';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -7,38 +7,33 @@ export const createMessage = async (req, res) => {
     try {
         const { message, dialogId } = req.body;
         const userId = req.userId;
+
         const user = await User.findById(userId);
-        if (req.files) {
-            let fileName = Date.now().toString() + req.files.image.name;
-            const __dirname = dirname(fileURLToPath(import.meta.url));
-            req.files.image.mv(path.join(__dirname, '..', 'uploads', fileName));
-
-            const newMessageWithImg = new Message({
-                message,
-                phone: user.phone,
-                author: userId,
-                imgUrl: fileName,
-                dialogId,
-            });
-
-            await newMessageWithImg.save();
-            return res.send(newMessageWithImg);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
         }
 
-        const newMessageWithoutImg = new Message({
+        const fileName = req.files ? Date.now().toString() + req.files.image.name : '';
+
+        if (fileName) {
+            const __dirname = dirname(fileURLToPath(import.meta.url));
+            req.files.image.mv(path.join(__dirname, '..', 'uploads', fileName));
+        }
+
+        const newMessage = new Message({
             message,
             phone: user.phone,
             author: userId,
-            imgUrl: '',
+            imgUrl: fileName || '',
             dialogId,
         });
 
-        await newMessageWithoutImg.save();
-        return res.send(newMessageWithoutImg);
+        await newMessage.save();
 
+        res.status(201).send(newMessage);
     } catch (error) {
         console.error('Error creating message:', error);
-        return res.status(500).send({ message: 'Something went wrong while creating message' });
+        res.status(500).send({ message: 'Something went wrong while creating message' });
     }
 };
 

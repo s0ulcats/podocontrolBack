@@ -1,5 +1,4 @@
 import User from '../models/User.js';
-import Post from '../models/Post.js';
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -38,7 +37,7 @@ export const updateAccountData = async (req, res) => {
         user.phone = req.body.phone || 'undf';
         await user.save();
         
-        res.json(user); // Возвращаем обновленный объект пользователя
+        res.json(user); 
     } catch (error) {
         res.status(500).json({ message: 'Something went wrong' });
     }
