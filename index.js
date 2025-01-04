@@ -39,7 +39,7 @@ app.use('/api/recordings', recordingRoute);
 async function start() {
     try {
         await mongoose.connect(
-            `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.nmcxy.mongodb.net/${DB_NAME}`
+            `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.qihpjss.mongodb.net/${DB_NAME}`
         );
         console.log('Connected to DB');
 
