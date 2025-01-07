@@ -20,7 +20,7 @@ const DB_NAME = process.env.DB_NAME;
 
 app.use(
     cors({
-        origin: 'https://bejewelled-pudding-e6f831.netlify.app',
+        origin: 'https://clinquant-alfajores-8ea610.netlify.app',
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
         credentials: true,
     })
